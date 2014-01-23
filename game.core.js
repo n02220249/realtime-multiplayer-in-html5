@@ -63,6 +63,11 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
             width : 720,
             height : 480
         };
+	console.log("ww");
+	//var img = new Image();
+	//img.src = "test.png";
+	//this.image = img;
+
 
             //We create a player set, passing them
             //the game that is running them, as well
@@ -213,7 +218,16 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
         this.color = 'rgba(255,255,255,0.1)';
         this.info_color = 'rgba(255,255,255,0.1)';
         this.id = '';
+	
+	if(!this.game.server){
 
+       var  img = new Image();
+	img.src = 'test.png';
+	this.image = img;
+
+}
+	
+	console.log("bb");
             //These are used in moving us around later
         this.old_state = {pos:{x:0,y:0}};
         this.cur_state = {pos:{x:0,y:0}};
@@ -243,11 +257,19 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
   
     game_player.prototype.draw = function(){
 
+
+	//var img = new Image();
+	//img.src = 'test.png';
+	//this.image = img;
+
+
             //Set the color for this player
         game.ctx.fillStyle = this.color;
 
             //Draw a rectangle for us
-        game.ctx.fillRect(this.pos.x - this.size.hx, this.pos.y - this.size.hy, this.size.x, this.size.y);
+       // game.ctx.fillRect(this.pos.x - this.size.hx, this.pos.y - this.size.hy, this.size.x, this.size.y);
+         
+	game.ctx.drawImage(this.image, this.pos.x, this.pos.y, this.image.width, this.image.height);
 
             //Draw a status update
         game.ctx.fillStyle = this.info_color;
