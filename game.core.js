@@ -68,7 +68,7 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
 	//img.src = "test.png";
 	//this.image = img;
 
-
+	this.map = new game_map(this);
             //We create a player set, passing them
             //the game that is running them, as well
         if(this.server) {
@@ -204,6 +204,21 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
         A simple class to maintain state of a player on screen,
         as well as to draw that state when required.
 */
+
+    var game_map = function( game_instance ) {
+	this.game = game_instance;
+	this.pos = { x:0, y:0 };
+	if(!this.game.server){
+	var img = new Image();
+	img.src = 'map.png';
+	this.image = img;
+	}
+    };
+
+    game_map.prototype.draw = function(){
+	game.ctx.drawImage(this.image, this.pos.x, this.pos.y, this.image.width, this.image.height);
+
+    };
 
     var game_player = function( game_instance, player_instance ) {
 
@@ -845,7 +860,7 @@ game_core.prototype.client_update = function() {
     if( !this.naive_approach ) {
         this.client_process_net_updates();
     }
-
+    this.map.draw();
         //Now they should have updated, we can draw the entity
     this.players.other.draw();
 
