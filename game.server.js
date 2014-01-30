@@ -17,7 +17,7 @@
 
         //Import shared game library code.
     require('./game.core.js');
-
+    require('./game.map.js');
         //A simple wrapper for logging so we can toggle it,
         //and augment it for clarity.
     game_server.log = function() {

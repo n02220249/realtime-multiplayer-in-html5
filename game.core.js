@@ -68,7 +68,7 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
 	//img.src = "test.png";
 	//this.image = img;
 
-	this.map = new game_map(this);
+
             //We create a player set, passing them
             //the game that is running them, as well
         if(this.server) {
@@ -79,9 +79,13 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
             };
 
            this.players.self.pos = {x:20,y:20};
-
+		var map = require('./game.map.js');
+		var myMap = new game_map(this);
+		this.map = myMap;
         } else {
+		var myMap = new game_map(this);
 
+	            this.map = myMap;
             this.players = {
                 self : new game_player(this),
                 other : new game_player(this)
@@ -111,6 +115,8 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
             this.ghosts.pos_other.pos = { x:500, y:200 };
             this.ghosts.server_pos_other.pos = { x:500, y:200 };
         }
+        
+
 
             //The speed at which the clients move.
         this.playerspeed = 120;
@@ -203,7 +209,7 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
 
         A simple class to maintain state of a player on screen,
         as well as to draw that state when required.
-*/
+
 
     var game_map = function( game_instance ) {
 	this.game = game_instance;
@@ -219,7 +225,7 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
 	game.ctx.drawImage(this.image, this.pos.x, this.pos.y, this.image.width, this.image.height);
 
     };
-
+*/
     var game_player = function( game_instance, player_instance ) {
 
             //Store the instance, if any
