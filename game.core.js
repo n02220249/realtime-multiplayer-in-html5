@@ -80,12 +80,23 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
 
            this.players.self.pos = {x:20,y:20};
 		var map = require('./game.map.js');
-		var myMap = new game_map(this);
+		var myMap = new map(this);
 		this.map = myMap;
+	for (var name in this.map){
+	console.log(name);
+}
+	console.log('here');
+	this.map.server_update();	
+		
         } else {
 		var myMap = new game_map(this);
 
 	            this.map = myMap;
+
+        for (var name in this.map){
+        console.log(name);
+}
+
             this.players = {
                 self : new game_player(this),
                 other : new game_player(this)
@@ -321,8 +332,10 @@ game_core.prototype.update = function(t) {
     if(!this.server) {
         this.client_update();
     } else {
+	
         this.server_update();
     }
+
 
         //schedule the next update
     this.updateid = window.requestAnimationFrame( this.update.bind(this), this.viewport );
@@ -466,7 +479,7 @@ game_core.prototype.server_update_physics = function() {
     //Makes sure things run smoothly and notifies clients of changes
     //on the server side
 game_core.prototype.server_update = function(){
-
+	this.map.server_update();
         //Update the state of our local clock to match the timer
     this.server_time = this.local_time;
 
