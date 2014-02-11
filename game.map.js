@@ -18,22 +18,19 @@ var game_map = function( game_instance ) {
         img.src = 'tiletrans4.png';
         this.image = img;
 	this.tileSet = this.sliceTiles();
-	this.map = this.server_map_gen();
+//	this.map = this.server_map_gen();
+	//console.log(this.map);
 	}
 	if(!this.game.server){
 	//	this.server_update();
 		console.log("dddd");
 	}else{
-//		this.server_update();
+		this.map = this.server_map_gen();
 		console.log("rrrrr");
 	
         }
     };
 
-game_map.prototype.foo = function(){
-
-
-};
 
 
 game_map.prototype.server_update = function(){
@@ -44,19 +41,26 @@ this.laststate = {
 
 
 };
-/*
-if(this.players.self.instance) {
-	this.players.self.instance.emit('onserverupdate',this.laststate);
-}
 
-if(this.players.other.instance) {
-	this.players.other.instance.emit('onserverupdate',this.laststate);
-}
-*/
+    if(this.game.players.self.instance) {
+        this.game.players.self.instance.emit( 'mapupdate', this.laststate );
+    }
+
+        //Send the snapshot to the 'client' player
+    if(this.game.players.other.instance) {
+        this.game.players.other.instance.emit( 'mapupdate', this.laststate );
+    }
+    
+
+
+
+
 };
 
 game_map.prototype.server_map_gen = function() {
 var mapGrid = [[0,1],[2,3],[4,5]];
+
+//var mapGrid
 return mapGrid;
 
 };
