@@ -24,6 +24,7 @@ var game_map = function( game_instance ) {
 	if(!this.game.server){
 	//	this.server_update();
 		console.log("dddd");
+		this.map = this.server_map_gen();
 	}else{
 		this.map = this.server_map_gen();
 		console.log("rrrrr");
@@ -58,7 +59,12 @@ this.laststate = {
 };
 
 game_map.prototype.server_map_gen = function() {
-var mapGrid = [[0,1],[2,3],[4,5]];
+
+//		[y[x]]
+
+var mapGrid =   [[0,1,2,3,4,5,6,7]
+		,[8,9,10,11,12,13,14,15]
+		,[16,17,18,19,20,21,22,23]];
 
 //var mapGrid
 return mapGrid;
@@ -72,8 +78,8 @@ game_map.prototype.drawTile = function(tile, destX, destY) {
     game_map.prototype.sliceTiles = function() {
                         var tileArray = new Array();
 
-	for(var i=0; i<2; i++) {
-		for(var j=0; j<2; j++) {
+	for(var i=0; i<8; i++) {
+		for(var j=0; j<8; j++) {
 	
 			tileArray.push(new tile(this.game, j*32, i*32, 32, 32));
 		}
@@ -82,8 +88,11 @@ game_map.prototype.drawTile = function(tile, destX, destY) {
 
 };
     game_map.prototype.draw = function(){
-	this.drawTile(this.tileSet[1], 100,100)
-
+	for(var i=0; i<this.map.length;i++){
+	   for(var j=0; j<this.map[0].length;j++){
+		this.drawTile(this.tileSet[this.map[i][j]], 100+(j*32),100+(i*32))
+	   }
+	}
     };
 	return game_map;
 })();
