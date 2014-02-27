@@ -26,11 +26,16 @@ var game_map = function( game_instance ) {
 		console.log("dddd");
 		//this.map = this.server_map_gen();
 	}else{
+
+		this.server_google_query();
+
 		this.map = this.server_map_gen();
 		console.log("rrrrr");
 	
         }
     };
+
+
 
 
 game_map.prototype.printMap = function(){
@@ -49,6 +54,7 @@ for (var i = 0; i < a.length; i++)
 this.map = swapArray;
 
 };
+
 
 
 game_map.prototype.server_update = function(){
@@ -75,13 +81,45 @@ this.laststate = {
 
 };
 
+game_map.prototype.server_google_query = function(){
+var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
+
+
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center={LATLONG}&zoom=13&size=1024x160&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+
+http.get(src, function(responseData){
+
+console.log('done');
+responseData.pipe(new PNG({
+                filterType: -1
+        }))
+        .on('parsed', function(){
+
+
+//console.log(this.width);
+console.log(this.height);
+console.log(this.width);
+console.log(this.data.length);
+console.log(this.data[0]);
+console.log(this.data[1]);
+console.log(this.data[2]);
+console.log(this.data[3]);
+});
+});
+};
+
+game_map.prototype.bufferPrint = function(data){
+console.log(data);
+};
+
+
 game_map.prototype.server_map_gen = function() {
 
 //		[y[x]]
 
-var mapGrid =   [[1,1,2,3,4,5,6,7]
-		,[8,9,10,11,12,13,14,15]
-		,[16,17,18,19,20,21,22,23]];
+var mapGrid =   [[1,1,2,3,4,5,0,0]
+		,[8,9,10,11,12,13,0,0]
+		,[16,17,18,19,20,21,0,0]];
 
 //var mapGrid
 return mapGrid;
