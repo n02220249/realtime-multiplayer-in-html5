@@ -765,6 +765,14 @@ game_core.prototype.client_process_net_updates = function() {
 
 }; //game_core.client_process_net_updates
 
+game_core.prototype.client_onmapinit_recieved = function(data){
+
+this.map.setMap(data.map);
+
+
+//console.log(data.map);
+};
+
 game_core.prototype.client_onserverupdate_recieved = function(data){
 
             //Lets clarify the information we have locally. One of the players is 'hosting' and
@@ -879,6 +887,9 @@ game_core.prototype.client_update = function() {
     if( !this.naive_approach ) {
         this.client_process_net_updates();
     }
+	
+//	this.map.printMap();
+
     this.map.draw();
         //Now they should have updated, we can draw the entity
     this.players.other.draw();
@@ -1212,6 +1223,10 @@ game_core.prototype.client_connect_to_server = function() {
         this.socket.on('error', this.client_ondisconnect.bind(this));
             //On message from the server, we parse the commands and send it to the handlers
         this.socket.on('message', this.client_onnetmessage.bind(this));
+
+
+	this.socket.on('onmapinit', this.client_onmapinit_recieved.bind(this));
+
 
 }; //game_core.client_connect_to_server
 
