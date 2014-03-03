@@ -85,7 +85,7 @@ game_map.prototype.server_google_query = function(){
 var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
 
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=12&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=13&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -113,7 +113,13 @@ console.log(this.data[3]);
 var rgbMatrix = bufferConvert(this, 50);
 var googleMatrix = selectTileMatrix(rgbMatrix);
 //var a = [[0,0],[0,0]];
-context.setMap(googleMatrix);
+//context.setMap(googleMatrix);
+
+context.setMap(context.server_generateMapFromBuffer(this,50));
+
+
+
+
 
 
 
@@ -159,6 +165,59 @@ return newArray;
 
 });
 });
+};
+game_map.prototype.server_chooseTileFromBuffer = function(img, x, y, tilesize){
+var tileX = x*tilesize+tilesize/2;
+var tileY = y*tilesize+tilesize/2;
+
+console.log(tileX);
+console.log(tileY);
+
+if(this.pixelToHex(img,tileX,tileY) == "00ff00ff"){
+return 1;
+}else{
+return 0;
+}
+};
+
+game_map.prototype.server_generateMapFromBuffer = function(img,tilesize){
+
+var map = [];
+
+for (var i = 0; i < img.height/tilesize; i++){
+	map[i] = [];
+	for(var j = 0; j < img.width/tilesize; j++){
+		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
+	}	
+
+}
+
+console.log("convert test");
+//console.log(this.pixelToHex(img, 4,5));
+return map;
+};
+
+game_map.prototype.pixelToHex = function(img, pixelX, pixelY){
+
+var data = img.data;
+var imgWidth = img.width;
+
+
+var forY = pixelY*imgWidth;
+var shift = (forY+pixelX)*4;
+var colorR = toHex(data[shift]);
+var colorG = toHex(data[shift+1]);
+var colorB = toHex(data[shift+2]);
+var colorA = toHex(data[shift+3]);
+var num = ""+colorR+colorG+colorB+colorA;
+
+return num;
+
+function toHex(x){
+var hex = x.toString(16);
+return hex.length == 1 ? "0" + hex : hex;
+}
+
 };
 
 
