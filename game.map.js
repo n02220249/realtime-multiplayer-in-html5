@@ -85,7 +85,7 @@ game_map.prototype.server_google_query = function(){
 var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
 
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=12&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=13&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -98,6 +98,8 @@ responseData.pipe(new PNG({
                 filterType: -1
         }))
         .on('parsed', function(){
+
+var dst = fs.createWriteStream('out.png');
 
 //context.setMap(a);
 console.log('done');
@@ -112,7 +114,7 @@ context.setMap(context.server_generateMapFromBuffer(this,50));
 
 
 
-
+this.pack().pipe(dst);
 });
 });
 };
@@ -120,8 +122,21 @@ game_map.prototype.server_chooseTileFromBuffer = function(img, x, y, tilesize){
 var tileX = x*tilesize+tilesize/2;
 var tileY = y*tilesize+tilesize/2;
 
+var tileXLeftTop = x*tilesize;
+var tileYLeftTop = y*tilesize;
 console.log(tileX);
 console.log(tileY);
+
+for(var i = 0;i<tilesize;i++){
+this.changePixelColor(img,tileXLeftTop+i,tileYLeftTop,0,0,0,255);
+}
+
+for(var i = 0;i<tilesize;i++){
+this.changePixelColor(img,tileXLeftTop,tileYLeftTop+i,0,0,0,255);
+}
+
+
+
 
 if(this.pixelToHex(img,tileX,tileY) == "00ff00ff"){
 return 1;
@@ -136,7 +151,7 @@ var map = [];
 
 for (var i = 0; i < img.height/tilesize; i++){
 	map[i] = [];
-	for(var j = 0; j < img.width/tilesize; j++){
+	for(var j = 0; j < (img.width/tilesize)-1; j++){
 		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
 	}	
 
@@ -145,6 +160,19 @@ for (var i = 0; i < img.height/tilesize; i++){
 console.log("convert test");
 //console.log(this.pixelToHex(img, 4,5));
 return map;
+};
+game_map.prototype.changePixelColor = function(img, pixelX, pixelY, r, g, b, a){
+var data = img.data;
+var imgWidth = img.width;
+var forY = pixelY*imgWidth;
+var shift = (forY+pixelX)*4;
+data[shift] = r;
+data[shift+1] = g;
+data[shift+2] = b;
+data[shift+3] = a;
+
+
+
 };
 
 game_map.prototype.pixelToHex = function(img, pixelX, pixelY){
@@ -157,10 +185,11 @@ var forY = pixelY*imgWidth;
 var shift = (forY+pixelX)*4;
 var colorR = toHex(data[shift]);
 var colorG = toHex(data[shift+1]);
+
 var colorB = toHex(data[shift+2]);
 var colorA = toHex(data[shift+3]);
 var num = ""+colorR+colorG+colorB+colorA;
-
+this.changePixelColor(img,pixelX,pixelY,0,0,0,255);
 return num;
 
 function toHex(x){
