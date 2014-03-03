@@ -85,7 +85,7 @@ game_map.prototype.server_google_query = function(){
 var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
 
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=13&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=12&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -102,18 +102,6 @@ responseData.pipe(new PNG({
 //context.setMap(a);
 console.log('done');
 
-//console.log(this.width);
-console.log(this.height);
-console.log(this.width);
-console.log(this.data.length);
-console.log(this.data[0]);
-console.log(this.data[1]);
-console.log(this.data[2]);
-console.log(this.data[3]);
-var rgbMatrix = bufferConvert(this, 50);
-var googleMatrix = selectTileMatrix(rgbMatrix);
-//var a = [[0,0],[0,0]];
-//context.setMap(googleMatrix);
 
 context.setMap(context.server_generateMapFromBuffer(this,50));
 
@@ -123,45 +111,7 @@ context.setMap(context.server_generateMapFromBuffer(this,50));
 
 
 
-function selectTileMatrix(m){
-var g = [];
-for(var i = 0; i < m.length; i++){
-g[i] = [];
-for(var j = 0; j < m[0].length; j++){
-if(m[i][j] == '02550255'){
-g[i][j] = 1;
-console.log("water");
-} else {
-console.log("glass");
-g[i][j] = 0
-}
-}
 
-}
-return g;
-};
-
-function bufferConvert(img, tilesize){
-
-var newArray = [];
-
-for(var i = 0; i < img.height/tilesize; i++){
-newArray[i] = [];
-for(var j = 0; j < img.width/tilesize; j++){
-var x = (i*(img.height/tilesize)*4)+(j*tilesize*4);
-console.log(x);
-console.log(i);
-console.log(j);
-newArray[i][j] = img.data[x].toString()+img.data[x+1].toString()+img.data[x+2].toString()+img.data[x+3].toString();
-console.log(newArray[i][j]);
-
-}
-
-}
-
-console.log("finished");
-return newArray;
-}
 
 });
 });
