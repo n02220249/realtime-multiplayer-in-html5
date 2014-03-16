@@ -46,13 +46,14 @@ console.log(this.map);
 
 
 game_map.prototype.setMap = function(a){
+if(a){
 var swapArray = [];
 
 for (var i = 0; i < a.length; i++)
 	swapArray[i] = a[i].slice();
 
 this.map = swapArray;
-
+}
 };
 
 
@@ -84,8 +85,9 @@ this.laststate = {
 game_map.prototype.server_google_query = function(){
 var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
-
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7300694,-74.0024224&zoom=13&size=1024x400&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+//1024 400
+//40.7300694, -74.0024224
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=41.8148546,-70.5325615&zoom=13&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -105,7 +107,7 @@ var dst = fs.createWriteStream('out.png');
 console.log('done');
 
 
-context.setMap(context.server_generateMapFromBuffer(this,50));
+context.setMap(context.server_generateMapFromBuffer(this,32));
 
 
 
@@ -127,6 +129,9 @@ var tileYLeftTop = y*tilesize;
 console.log(tileX);
 console.log(tileY);
 
+var pixelColor = this.pixelToHex(img,tileX,tileY);
+console.log(pixelColor);
+
 for(var i = 0;i<tilesize;i++){
 this.changePixelColor(img,tileXLeftTop+i,tileYLeftTop,0,0,0,255);
 }
@@ -138,9 +143,12 @@ this.changePixelColor(img,tileXLeftTop,tileYLeftTop+i,0,0,0,255);
 
 
 
-if(this.pixelToHex(img,tileX,tileY) == "00ff00ff"){
+if(pixelColor == "00ff00ff" || pixelColor == "00fe00ff"){
+console.log("1");
 return 1;
 }else{
+console.log("0");
+
 return 0;
 }
 };
@@ -149,9 +157,9 @@ game_map.prototype.server_generateMapFromBuffer = function(img,tilesize){
 
 var map = [];
 
-for (var i = 0; i < img.height/tilesize; i++){
+for (var i = 0; i < (img.height/tilesize); i++){
 	map[i] = [];
-	for(var j = 0; j < (img.width/tilesize)-1; j++){
+	for(var j = 0; j < (img.width/tilesize); j++){
 		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
 	}	
 
@@ -224,7 +232,10 @@ return mapGrid;
 
 game_map.prototype.drawTile = function(tile, destX, destY) {
 
-	game.ctx.drawImage(this.image, tile.sourceX, tile.sourceY, tile.width, tile.height, destX, destY, 32, 32);
+var cameraX = -this.game.players.self.pos.x;
+var cameraY = -this.game.players.self.pos.y;
+
+	game.ctx.drawImage(this.image, tile.sourceX, tile.sourceY, tile.width, tile.height, destX-cameraX, destY-cameraY, 32, 32);
 };
 
     game_map.prototype.sliceTiles = function() {

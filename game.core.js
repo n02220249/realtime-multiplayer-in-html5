@@ -102,6 +102,8 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
                 other : new game_player(this)
             };
 
+	this.camera = {x:this.players.self.pos.x+100,y:this.players.self.pos.y+100};
+
                 //Debugging ghosts, to help visualise things
             this.ghosts = {
                     //Our ghost position on the server
@@ -251,6 +253,9 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
         this.info_color = 'rgba(255,255,255,0.1)';
         this.id = '';
 	
+	this.camera = { x:this.pos.x+200, y:this.pos.y+200 };
+
+
 	if(!this.game.server){
 
        var  img = new Image();
@@ -289,7 +294,8 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
   
     game_player.prototype.draw = function(){
 
-
+//var cameraX = -this.pos.x;
+//var cameraY = -this.pos.y;
 	//var img = new Image();
 	//img.src = 'test.png';
 	//this.image = img;
@@ -301,11 +307,12 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
             //Draw a rectangle for us
        // game.ctx.fillRect(this.pos.x - this.size.hx, this.pos.y - this.size.hy, this.size.x, this.size.y);
          
-	game.ctx.drawImage(this.image, this.pos.x, this.pos.y, this.image.width, this.image.height);
+	game.ctx.drawImage(this.image, this.pos.x+this.camera.x, this.pos.y+this.camera.y, this.image.width, this.image.height);
+
 
             //Draw a status update
         game.ctx.fillStyle = this.info_color;
-        game.ctx.fillText(this.state, this.pos.x+10, this.pos.y + 4);
+        game.ctx.fillText(this.state, this.pos.x+10+this.camera.x, this.pos.y + +this.camera.y);
     
     }; //game_player.draw
 
@@ -335,7 +342,7 @@ game_core.prototype.update = function(t) {
 	
         this.server_update();
     }
-
+	
 
         //schedule the next update
     this.updateid = window.requestAnimationFrame( this.update.bind(this), this.viewport );
@@ -348,7 +355,7 @@ game_core.prototype.update = function(t) {
     In this example, `item` is always of type game_player.
 */
 game_core.prototype.check_collision = function( item ) {
-
+/*
         //Left wall.
     if(item.pos.x <= item.pos_limits.x_min) {
         item.pos.x = item.pos_limits.x_min;
@@ -372,7 +379,7 @@ game_core.prototype.check_collision = function( item ) {
         //Fixed point helps be more deterministic
     item.pos.x = item.pos.x.fixed(4);
     item.pos.y = item.pos.y.fixed(4);
-    
+  */  
 }; //game_core.check_collision
 
 
