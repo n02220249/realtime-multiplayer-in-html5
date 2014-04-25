@@ -91,6 +91,9 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
         } else {
 		var myMap = new game_map(this);
 
+		
+
+
 	            this.map = myMap;
 
         for (var name in this.map){
@@ -102,7 +105,7 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
                 other : new game_player(this)
             };
 
-	this.camera = {x:this.players.self.pos.x+100,y:this.players.self.pos.y+100};
+	this.camera = {x:this.players.self.pos.x-200,y:this.players.self.pos.y-100};
 
                 //Debugging ghosts, to help visualise things
             this.ghosts = {
@@ -299,7 +302,7 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
 	//var img = new Image();
 	//img.src = 'test.png';
 	//this.image = img;
-
+//console.log(this.game.camera);
 
             //Set the color for this player
         game.ctx.fillStyle = this.color;
@@ -307,12 +310,12 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
             //Draw a rectangle for us
        // game.ctx.fillRect(this.pos.x - this.size.hx, this.pos.y - this.size.hy, this.size.x, this.size.y);
          
-	game.ctx.drawImage(this.image, this.pos.x+this.camera.x, this.pos.y+this.camera.y, this.image.width, this.image.height);
+	game.ctx.drawImage(this.image, this.pos.x+this.game.camera.x, this.pos.y+this.game.camera.y, this.image.width, this.image.height);
 
 
             //Draw a status update
         game.ctx.fillStyle = this.info_color;
-        game.ctx.fillText(this.state, this.pos.x+10+this.camera.x, this.pos.y + +this.camera.y);
+        game.ctx.fillText(this.state, this.pos.x+10+this.game.camera.x, this.pos.y + +this.game.camera.y);
     
     }; //game_player.draw
 
@@ -547,7 +550,8 @@ game_core.prototype.client_handle_input = function(){
     var y_dir = 0;
     var input = [];
     this.client_has_input = false;
-
+    var cam_x = 0;
+    var cam_y = 0;
     if( this.keyboard.pressed('A') ||
         this.keyboard.pressed('left')) {
 
@@ -580,6 +584,36 @@ game_core.prototype.client_handle_input = function(){
 
         } //up
 
+    if( this.keyboard.pressed('J')) {
+	    cam_x = 1;
+	    
+        }
+
+    if( this.keyboard.pressed('L')) {
+            cam_x = -1;
+
+        }
+
+    if( this.keyboard.pressed('K')) {
+            cam_y = -1;
+
+        }
+
+    if( this.keyboard.pressed('I')) {
+            cam_y = 1;
+
+        }
+
+//	console.log("pos"+ x_dir);
+//	console.log("cam" + cam_x);
+
+        var newcam = this.v_add(this.camera, this.physics_movement_vector_from_direction( cam_x, cam_y ));
+
+        console.log(newcam);
+        this.camera = newcam;
+
+
+
     if(input.length) {
 
             //Update what sequence we are on now
@@ -601,7 +635,7 @@ game_core.prototype.client_handle_input = function(){
 
             //Go
         this.socket.send(  server_packet  );
-
+	
             //Return the direction if needed
         return this.physics_movement_vector_from_direction( x_dir, y_dir );
 
@@ -1076,7 +1110,7 @@ game_core.prototype.client_reset_positions = function() {
 
 game_core.prototype.client_onreadygame = function(data) {
 
-    var server_time = parseFloat(data.replace('-','.'));
+    var server_time = farseFloat(data.replace('-','.'));
 
     var player_host = this.players.self.host ?  this.players.self : this.players.other;
     var player_client = this.players.self.host ?  this.players.other : this.players.self;

@@ -230,12 +230,12 @@ return mapGrid;
 
 };
 
-game_map.prototype.drawTile = function(tile, destX, destY) {
+game_map.prototype.drawTile = function(tile, destX, destY, cX, cY) {
 
-var cameraX = -this.game.players.self.pos.x;
-var cameraY = -this.game.players.self.pos.y;
+//var cameraX = -this.game.players.self.pos.x;
+//var cameraY = -this.game.players.self.pos.y;
 
-	game.ctx.drawImage(this.image, tile.sourceX, tile.sourceY, tile.width, tile.height, destX-cameraX, destY-cameraY, 32, 32);
+	game.ctx.drawImage(this.image, tile.sourceX, tile.sourceY, tile.width, tile.height, destX-cX, destY-cY, 32, 32);
 };
 
     game_map.prototype.sliceTiles = function() {
@@ -254,9 +254,14 @@ var cameraY = -this.game.players.self.pos.y;
 
 	if(this.map){
 
+var cameraX = parseInt(-this.game.camera.x);
+var cameraY = parseInt(-this.game.camera.y);
+
+
+
 	for(var i=0; i<this.map.length;i++){
 	   for(var j=0; j<this.map[0].length;j++){
-		this.drawTile(this.tileSet[this.map[i][j]], (j*32),(i*32))
+		this.drawTile(this.tileSet[this.map[i][j]], (j*32),(i*32),cameraX, cameraY)
 	   }
 	}
 	}
