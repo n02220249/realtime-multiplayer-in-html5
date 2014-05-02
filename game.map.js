@@ -10,6 +10,45 @@ this.height = height;
 
 };
 
+var mapStats = function() {
+this.totalN = 0;
+};
+
+mapStats.prototype.insert = function(tileObj) {
+
+};
+
+var tileStats = function(img) {
+	this.img = img;
+	this.totalN = 0;
+	this.counter = [];
+	
+
+
+};
+
+tileStats.prototype.insert = function(value){
+this.counter[value] = this.counter[value] + 1;
+this.totalN++;
+};
+
+tileStats.prototype.getStats = function() {
+var s;
+s = s + "number of points:" + this.totalN;
+//s = "total Tiles: " + 
+
+return s;
+};
+
+tileStats.prototype.percentForIndex = function(index) {
+return 0;
+};
+
+tileStats.prototype.genTileValue = function(errTol) { //out of 100
+console.log("tileStat total : " + this.totalN);
+return 0;
+};
+//genStats.prototype.
 var game_map = function( game_instance ) {
         this.game = game_instance;
         this.pos = { x:0, y:0 };
@@ -87,7 +126,7 @@ var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
 //1024 400
 //40.7300694, -74.0024224
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=41.8148546,-70.5325615&zoom=13&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7127,-74.0059&zoom=12&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -110,16 +149,12 @@ console.log('done');
 context.setMap(context.server_generateMapFromBuffer(this,32));
 
 
-
-
-
-
-
-
 this.pack().pipe(dst);
 });
 });
 };
+
+
 game_map.prototype.server_chooseTileFromBuffer = function(img, x, y, tilesize){
 var tileX = x*tilesize+tilesize/2;
 var tileY = y*tilesize+tilesize/2;
@@ -140,18 +175,68 @@ for(var i = 0;i<tilesize;i++){
 this.changePixelColor(img,tileXLeftTop,tileYLeftTop+i,0,0,0,255);
 }
 
+return this.hexToTile(pixelColor);
 
-
-
+/**
 if(pixelColor == "00ff00ff" || pixelColor == "00fe00ff"){
-console.log("1");
+console.log("1");      //water
 return 1;
 }else{
-console.log("0");
+console.log("0");      //grass
+
+return 0;
+
+}
+**/
+};
+game_map.prototype.hexToTile = function(hColor) {
+
+if(hColor == "00ff00ff" || hColor == "00fe00ff"){
+console.log("1");      //water
+return 1;
+}else{
+//console.log("0");      //grass
 
 return 0;
 }
+
 };
+
+game_map.prototype.server_iGenTile = function(img,x,y,tilesize, checknumber){
+
+
+var tileX = x*tilesize+tilesize/2;
+var tileY = y*tilesize+tilesize/2;
+
+var tileXLeftTop = x*tilesize;
+var tileYLeftTop = y*tilesize;
+
+var stats = new tileStats(img);
+
+
+for (var i = 0; i < (1); i++){
+        
+	
+
+        for(var j = 0; j < (img.width/tilesize); j++){
+		
+		console.log("X " + tileX + "Y" + tileY);
+			
+                var pxlcl = this.pixelToHex(img,tileX,tileY);
+		console.log(pxlcl);
+		var tileVal =this.hexToTile(pxlcl);	
+		stats.insert(tileVal);
+
+		
+        }
+
+}
+
+
+return stats.genTileValue();
+}
+
+
 
 game_map.prototype.server_generateMapFromBuffer = function(img,tilesize){
 
@@ -160,7 +245,10 @@ var map = [];
 for (var i = 0; i < (img.height/tilesize); i++){
 	map[i] = [];
 	for(var j = 0; j < (img.width/tilesize); j++){
+		
 		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
+
+//		map[i][j] = this.server_iGenTile(img, j, i, tilesize);
 	}	
 
 }
