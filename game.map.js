@@ -22,9 +22,17 @@ var tileStats = function(img) {
 	this.img = img;
 	this.totalN = 0;
 	this.counter = [];
-	
+	this.counter[0] = 0;
+	this.counter[1] = 0;	
 
 
+};
+
+tileStats.prototype.printStats = function() {
+console.log("Stats:");
+console.log("total: " + this.totalN);
+console.log("[1]: "+this.counter[0]);
+console.log("[0]: "+this.counter[1]);
 };
 
 tileStats.prototype.insert = function(value){
@@ -46,7 +54,16 @@ return 0;
 
 tileStats.prototype.genTileValue = function(errTol) { //out of 100
 console.log("tileStat total : " + this.totalN);
+var ratio = (this.counter[1])/this.totalN;
+console.log("ratio: " + ratio);
+
+if(ratio >(errTol/100)){
+return 1;
+}else{
 return 0;
+}
+
+//return 0;
 };
 //genStats.prototype.
 var game_map = function( game_instance ) {
@@ -236,7 +253,46 @@ for (var i = 0; i < (1); i++){
 return stats.genTileValue();
 }
 
+game_map.prototype.monteCarloTile = function(img, x, y, tilesize, checknumber) {
 
+var tileXLeftTop = x*tilesize;
+var tileYLeftTop = y*tilesize;
+
+var stats = new tileStats(img);
+
+this.createTileBorder(img,tileXLeftTop,tileYLeftTop,tilesize);
+for(var i = 0; i < checknumber; i++){
+var pointX = tileXLeftTop + parseInt(tilesize*Math.random());
+var pointY = tileYLeftTop + parseInt(tilesize*Math.random());
+console.log("X: " + pointX + "Y: " + pointY);
+var hex = this.pixelToHex(img,pointX,pointY);
+
+var tileVal = this.hexToTile(hex);
+
+this.changePixelColor(img,pointX,pointY,0,0,0,255);
+
+
+stats.insert(tileVal);
+
+}
+
+stats.printStats();
+
+return stats.genTileValue(5);
+};
+
+game_map.prototype.createTileBorder = function(img, tx,ty,tilesize){
+
+for(var i = 0;i<tilesize;i++){
+this.changePixelColor(img,tx+i,ty,0,0,0,255);
+}
+
+for(var i = 0;i<tilesize;i++){
+this.changePixelColor(img,tx,ty+i,0,0,0,255);
+}
+
+
+};
 
 game_map.prototype.server_generateMapFromBuffer = function(img,tilesize){
 
@@ -246,9 +302,14 @@ for (var i = 0; i < (img.height/tilesize); i++){
 	map[i] = [];
 	for(var j = 0; j < (img.width/tilesize); j++){
 		
-		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
+//		map[i][j] = this.server_chooseTileFromBuffer(img, j, i, tilesize);
 
 //		map[i][j] = this.server_iGenTile(img, j, i, tilesize);
+
+//		this.createTileBorder(tilesize);
+
+		map[i][j] = this.monteCarloTile(img, j, i, tilesize, 40);
+
 	}	
 
 }
