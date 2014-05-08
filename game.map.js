@@ -12,27 +12,43 @@ this.height = height;
 
 var mapStats = function() {
 this.totalN = 0;
+
+this.startTime = Date.now()
+console.log(this.startTime);
+
+
+
 };
 
 mapStats.prototype.insert = function(tileObj) {
 
 };
 
-var tileStats = function(img) {
+mapStats.prototype.elapsedTime = function() {
+var currTime = Date.now();
+return  (currTime - this.startTime);
+
+};
+
+var tileStats = function(img,x,y) {
 	this.img = img;
 	this.totalN = 0;
 	this.counter = [];
 	this.counter[0] = 0;
-	this.counter[1] = 0;	
+	this.counter[1] = 0;
+	this.x = x;
+	this.y = y;	
 
 
 };
 
 tileStats.prototype.printStats = function() {
+console.log("Tile X: " + this.x + " Y: " + this.y);
 console.log("Stats:");
 console.log("total: " + this.totalN);
 console.log("[1]: "+this.counter[0]);
 console.log("[0]: "+this.counter[1]);
+console.log("**************************************************");
 };
 
 tileStats.prototype.insert = function(value){
@@ -143,7 +159,18 @@ var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
 
 //1024 400
 //40.7300694, -74.0024224
-src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center=40.7127,-74.0059&zoom=12&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
+var zoom = '2';
+//var loc = '40.7127,-74.0059';    //manhattan
+
+//var loc = '37.91408,-122.3101';     //san fran
+
+//var loc = '16.9046921,-92.2834331';   //mexico zoom = 5 
+
+//var loc = '38.5882897,137.8463195'     //japan zoom = 5
+
+var loc = '50,-110';
+
+src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center='+loc+'&zoom='+zoom+'&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
 var context = this;
 
@@ -209,7 +236,7 @@ return 0;
 game_map.prototype.hexToTile = function(hColor) {
 
 if(hColor == "00ff00ff" || hColor == "00fe00ff"){
-console.log("1");      //water
+//console.log("1");      //water
 return 1;
 }else{
 //console.log("0");      //grass
@@ -228,7 +255,7 @@ var tileY = y*tilesize+tilesize/2;
 var tileXLeftTop = x*tilesize;
 var tileYLeftTop = y*tilesize;
 
-var stats = new tileStats(img);
+var stats = new tileStats(img, x, y);
 
 
 for (var i = 0; i < (1); i++){
@@ -258,13 +285,13 @@ game_map.prototype.monteCarloTile = function(img, x, y, tilesize, checknumber) {
 var tileXLeftTop = x*tilesize;
 var tileYLeftTop = y*tilesize;
 
-var stats = new tileStats(img);
+var stats = new tileStats(img,x,y);
 
 this.createTileBorder(img,tileXLeftTop,tileYLeftTop,tilesize);
 for(var i = 0; i < checknumber; i++){
 var pointX = tileXLeftTop + parseInt(tilesize*Math.random());
 var pointY = tileYLeftTop + parseInt(tilesize*Math.random());
-console.log("X: " + pointX + "Y: " + pointY);
+//console.log("X: " + pointX + "Y: " + pointY);
 var hex = this.pixelToHex(img,pointX,pointY);
 
 var tileVal = this.hexToTile(hex);
@@ -275,10 +302,10 @@ this.changePixelColor(img,pointX,pointY,0,0,0,255);
 stats.insert(tileVal);
 
 }
-
+var val = stats.genTileValue(50);
 stats.printStats();
 
-return stats.genTileValue(5);
+return val;
 };
 
 game_map.prototype.createTileBorder = function(img, tx,ty,tilesize){
@@ -298,6 +325,8 @@ game_map.prototype.server_generateMapFromBuffer = function(img,tilesize){
 
 var map = [];
 
+var stats = new mapStats();
+
 for (var i = 0; i < (img.height/tilesize); i++){
 	map[i] = [];
 	for(var j = 0; j < (img.width/tilesize); j++){
@@ -312,8 +341,9 @@ for (var i = 0; i < (img.height/tilesize); i++){
 
 	}	
 
-}
 
+}
+console.log("elapsed time (ms): "+stats.elapsedTime());
 console.log("convert test");
 //console.log(this.pixelToHex(img, 4,5));
 return map;
