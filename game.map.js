@@ -156,19 +156,55 @@ this.laststate = {
 
 game_map.prototype.server_google_query = function(){
 var fs = require('fs'), PNG = require('pngjs').PNG, http = require('http');
+//////////////
+var demo = true;
+
+if (demo == true) {
+
+switch(Math.floor((Math.random() * 3) + 1)) {
+	case 1:	
+
+		loc = '40.7127,-74.0059';    //manhattan
+		zoom = '12';
+
+		break;
+	case 2:
+              
+		
+		loc = '16.9046921,-92.2834331';   //mexico 
+		zoom = '5'; 
+
+		break;
+	case 3:
+             
+
+		loc = '50,-110'; //world
+		zoom = '2';
+
+
+		break;
+}
+
+
+} else {
+
+
 
 //1024 400
 //40.7300694, -74.0024224
-var zoom = '2';
+var zoom = '9';
 //var loc = '40.7127,-74.0059';    //manhattan
 
-//var loc = '37.91408,-122.3101';     //san fran
+var loc = '37.90000,-122.289';     //san fran
 
 //var loc = '16.9046921,-92.2834331';   //mexico zoom = 5 
 
 //var loc = '38.5882897,137.8463195'     //japan zoom = 5
 
-var loc = '50,-110';
+//var loc = '50,-110'; //world zoom 2
+
+}
+/////////
 
 src = 'http://maps.googleapis.com/maps/api/staticmap?scale=2&center='+loc+'&zoom='+zoom+'&size=976x650&sensor=false&visual_refresh=true&style=feature:water|color:0x00FF00&style=element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:poi|visibility:off&style=feature:road|visibility:off&style=feature:administrative|visibility:off';
 
@@ -433,8 +469,8 @@ game_map.prototype.drawTile = function(tile, destX, destY, cX, cY) {
 
 	if(this.map){
 
-var cameraX = parseInt(-this.game.camera.x);
-var cameraY = parseInt(-this.game.camera.y);
+var cameraX = parseInt(-this.game.camera.x+480);
+var cameraY = parseInt(-this.game.camera.y+325);
 
 
 

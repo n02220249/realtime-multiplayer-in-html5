@@ -105,7 +105,7 @@ if('undefined' != typeof(global)) frame_time = 45; //on server we run at 45ms, 2
                 other : new game_player(this)
             };
 
-	this.camera = {x:this.players.self.pos.x-200,y:this.players.self.pos.y-100};
+	this.camera = {x:this.players.self.pos.x-200,y:this.players.self.pos.y-100};  // -200 -100
 
                 //Debugging ghosts, to help visualise things
             this.ghosts = {
@@ -256,7 +256,7 @@ game_core.prototype.v_lerp = function(v,tv,t) { return { x: this.lerp(v.x, tv.x,
         this.info_color = 'rgba(255,255,255,0.1)';
         this.id = '';
 	
-	this.camera = { x:this.pos.x+200, y:this.pos.y+200 };
+	this.camera = { x:this.pos.x, y:this.pos.y };   // +200 +200
 
 
 	if(!this.game.server){
