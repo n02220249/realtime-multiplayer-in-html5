@@ -162,9 +162,9 @@ var demo = true;
 if (demo == true) {
 
 
-switch(6) {
+//switch(6) {
 
-//switch(Math.floor((Math.random() * 4) + 1)) {
+switch(Math.floor((Math.random() * 6) + 1)) {
 	case 1:	
 
 		loc = '40.7127,-74.0059';    //manhattan
@@ -182,7 +182,7 @@ switch(6) {
              
 
 		loc = '0,-110'; //world,   50,-100
-		zoom = '1';
+		zoom = '2';
 
 
 		break;

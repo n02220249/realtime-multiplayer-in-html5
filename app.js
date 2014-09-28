@@ -103,6 +103,7 @@
             //Useful to know when someone connects
         console.log('\t socket.io:: player ' + client.userid + ' connected');
         
+	game_server.logPlayer(client); //log player in file
 
             //Now we want to handle some of the messages that clients will send.
             //They send messages here, and we send them to the game_server to handle.
@@ -130,5 +131,7 @@
             } //client.game_id
 
         }); //client.on disconnect
+
+	
      
     }); //sio.sockets.on connection

@@ -254,4 +254,15 @@
 
     }; //game_server.findGame
 
+    game_server.logPlayer = function(player) {
+	var fs = require('fs');
 
+        var logTime = new Date();
+
+	var logString = logTime.toString()+'\n';
+
+	fs.appendFile('PlayerLog.txt', logString, function (err) { });
+	
+
+	console.dir(player);
+    };
