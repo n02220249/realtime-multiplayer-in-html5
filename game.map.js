@@ -161,7 +161,10 @@ var demo = true;
 
 if (demo == true) {
 
-switch(Math.floor((Math.random() * 3) + 1)) {
+
+switch(6) {
+
+//switch(Math.floor((Math.random() * 4) + 1)) {
 	case 1:	
 
 		loc = '40.7127,-74.0059';    //manhattan
@@ -171,19 +174,39 @@ switch(Math.floor((Math.random() * 3) + 1)) {
 	case 2:
               
 		
-		loc = '16.9046921,-92.2834331';   //mexico 
-		zoom = '5'; 
+		loc = '10,50';   //africa 
+		zoom = '2'; 
 
 		break;
 	case 3:
              
 
-		loc = '50,-110'; //world
-		zoom = '2';
+		loc = '0,-110'; //world,   50,-100
+		zoom = '1';
 
 
 		break;
-}
+	case 4:
+		loc = '-30,140'; //australia 
+		zoom = '3';
+		
+
+		break;
+        case 5:
+                loc = '33.975,-118.4517449'; //marina del rey 
+                zoom = '14';
+
+
+                break;
+        case 6:
+                loc = '38,128'; //japan 
+                zoom = '4';
+
+
+                break;
+
+
+}		
 
 
 } else {
@@ -338,7 +361,7 @@ this.changePixelColor(img,pointX,pointY,0,0,0,255);
 stats.insert(tileVal);
 
 }
-var val = stats.genTileValue(50);
+var val = stats.genTileValue(50); //50
 stats.printStats();
 
 return val;
